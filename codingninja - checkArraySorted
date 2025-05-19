@@ -1,0 +1,28 @@
+Problem statement
+You have been given an array ‘a’ of ‘n’ non-negative integers.You have to check whether the given array is sorted in the non-decreasing order or not.
+
+
+
+Your task is to return 1 if the given array is sorted. Else, return 0.
+
+
+
+Example :
+Input: ‘n’ = 5, ‘a’ = [1, 2, 3, 4, 5]
+Output: 1
+
+The given array is sorted in non-decreasing order; hence the answer will be 1.
+
+
+public class Solution {
+    public static int isSorted(int n, int []a) {
+       for(int i = 0; i< a.length - 1; i++){
+           for(int j = i+1; j < a.length; j++){
+               if(a[i] > a[j]){
+                   return 0;
+               }
+           }
+       }
+       return 1;
+    }
+}
