@@ -4,8 +4,8 @@ This repository contains my personal notes and code snippets as I learn Java. It
 
 -----
 
-\<details\>
-\<summary\>📚 Arrays\</summary\>
+<details>
+<summary>📚 Arrays </summary>
 
 ### 🧠 Arrays - Definition & Basics
 
@@ -271,12 +271,12 @@ Your 2D ArrayList: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
 > **Important:** You **must** initialize each inner `ArrayList` by calling `new ArrayList<>()` before adding elements.
 
-\</details\>
+</details>
 
 -----
 
-\<details\>
-\<summary\>📜 Strings\</summary\>
+<details>
+<summary>📜 Strings</summary>
 
 ### 📘 String vs. `StringBuilder` vs. `StringBuffer` (Definition)
 
@@ -545,4 +545,4 @@ System.out.println("\"abc123\".matches(\"[a-z]+\\\\d+\"): " + numbers.matches("[
 System.out.println("\"123abc\".matches(\"[a-z]+\\\\d+\"): " + "123abc".matches("[a-z]+\\d+")); // false
 ```
 
-\</details\>
+</details>
