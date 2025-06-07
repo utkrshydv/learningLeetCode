@@ -1,9 +1,9 @@
 class Solution {
     public int lengthOfLongestSubstring(String s) {
-     ArrayList<Character> window = new ArrayList<>();
+     List<Character> window = new ArrayList<>(); 
      int maxLength = 0;
 
-     for(int i=0; i<s.length(); i++){
+     for(int i =0; i<s.length(); i++){
         char c = s.charAt(i);
 
         while(window.contains(c)){
