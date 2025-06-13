@@ -8,14 +8,13 @@ class Solution {
         int[] array = new int[Math.min(nums1.length, nums2.length)];
         int i = 0, j = 0, k = 0;
 
-        while (i < nums1.length && j < nums2.length) {
-            if (nums1[i] < nums2[j]) {
+        while(i<nums1.length && j<nums2.length){
+            if(nums1[i] < nums2[j]){
                 i++;
-            } else if (nums2[j] < nums1[i]) {
+            } else if(nums1[i] > nums2[j]){
                 j++;
-            } else {
-                // Avoid duplicates
-                if (k == 0 || array[k - 1] != nums1[i]) {
+            } else{
+                if(k==0 || array[k-1] != nums1[i]){
                     array[k++] = nums1[i];
                 }
                 i++;
@@ -23,5 +22,6 @@ class Solution {
             }
         }
         return Arrays.copyOfRange(array, 0, k);
+
     }
 }
