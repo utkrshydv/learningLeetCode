@@ -18,17 +18,16 @@ class Solution {
 
         ListNode reversePrev = dummy;
 
-        for(int i = 1; i < left; i++){
+        for(int i = 1; i<left; i++){
             reversePrev = reversePrev.next;
         }
 
         ListNode current = reversePrev.next;
         ListNode tail = current;
 
-        ListNode next = null;
-        ListNode prev = null;
+        ListNode prev = null, next = null;
 
-        for(int i = 0; i < right-left+1; i++){
+        for(int i=0; i<right-left+1; i++){
             next = current.next;
             current.next = prev;
             prev = current;
