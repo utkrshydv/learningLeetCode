@@ -546,3 +546,941 @@ System.out.println("\"123abc\".matches(\"[a-z]+\\\\d+\"): " + "123abc".matches("
 ```
 
 </details>
+
+-----
+
+<details>
+<summary>
+ 🔗 Linked Lists
+</summary>
+
+## 1\. Singly Linked List
+
+A singly linked list is a linear data structure where each element (called a node) points to the next node in the sequence. It maintains a `head` (first node) and a `tail` (last node) for efficient operations at both ends.
+
+### Core Concepts
+
+  * **Node:** The fundamental building block of a linked list. Each node typically contains:
+      * `value`: The data stored in the node.
+      * `next`: A reference (or pointer) to the next node in the sequence. The last node's `next` reference is `null`.
+  * **Head:** A reference to the first node of the list.
+  * **Tail:** A reference to the last node of the list.
+  * **Size:** An integer tracking the number of nodes in the list.
+
+### `LinkedList.java` Implementation
+
+```java
+package learningJava;
+
+class LinkedList {
+    private Node head;
+    private Node tail;
+    private int size;
+
+    // Node class definition (private inner class)
+    class Node {
+        private int value; // Data stored in the node
+        private Node next; // Reference to the next node
+
+        // Constructor for a node with only value
+        public Node(int val) {
+            this.value = val;
+        }
+
+        // Constructor for a node with value and next node reference
+        public Node(int val, Node next) {
+            this.value = val;
+            this.next = next;
+        }
+    }
+
+    // Constructor for LinkedList
+    public LinkedList() {
+        this.size = 0; // Initialize size to 0 for an empty list
+    }
+
+    /**
+     * Returns the current size of the linked list.
+     * Time Complexity: O(1)
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Inserts a new node with the given value at the beginning of the list.
+     *
+     * Steps:
+     * 1. Create a new Node with the provided value.
+     * 2. Set the `next` of the new node to the current `head`.
+     * 3. Update the `head` to point to the new node.
+     * 4. If the list was empty (tail was null), set `tail` to `head`.
+     * 5. Increment the `size`.
+     *
+     * Time Complexity: O(1)
+     * Space Complexity: O(1)
+     */
+    public void insertFirst(int val) {
+        Node node = new Node(val); // Create new node
+        node.next = head;          // New node's next points to old head
+        head = node;               // Head now points to the new node
+
+        if (tail == null) { // If list was empty, new node is also the tail
+            tail = head;
+        }
+        size += 1; // Increment size
+    }
+
+    /**
+     * Inserts a new node with the given value at the end of the list.
+     *
+     * Steps:
+     * 1. If the list is empty, call `insertFirst` to handle it.
+     * 2. Create a new Node with the provided value.
+     * 3. Set the `next` of the current `tail` to the new node.
+     * 4. Update the `tail` to point to the new node.
+     * 5. Increment the `size`.
+     *
+     * Time Complexity: O(1) (because we have a tail pointer)
+     * Space Complexity: O(1)
+     */
+    public void insertLast(int val) {
+        if (tail == null) { // If the list is empty, inserting last is same as inserting first
+            insertFirst(val);
+            return;
+        }
+        Node node = new Node(val); // Create new node
+        tail.next = node;          // Current tail's next points to new node
+        tail = node;               // Tail now points to the new node
+        size++;                    // Increment size
+    }
+
+    /**
+     * Inserts a new node with the given value at a specific index.
+     *
+     * Steps:
+     * 1. Handle edge cases: if index is 0, call `insertFirst`; if index is `size`, call `insertLast`.
+     * 2. Traverse to the node *before* the target index.
+     * 3. Create a new Node, linking its `next` to the node that was originally at the target index.
+     * 4. Update the `next` of the previous node to point to the new node.
+     * 5. Increment the `size`.
+     *
+     * Time Complexity: O(index) in the worst case (O(N) for insertion near end).
+     * Space Complexity: O(1)
+     */
+    public void insert(int val, int index) {
+        if (index == 0) { // Inserting at the beginning
+            insertFirst(val);
+            return;
+        }
+        if (index == size) { // Inserting at the end
+            insertLast(val);
+            return;
+        }
+        if (index < 0 || index > size) { // Invalid index check
+            System.err.println("Error: Index out of bounds for insertion.");
+            return;
+        }
+
+        Node temp = head; // Start from head
+        // Traverse to the node *before* the insertion point
+        for (int i = 1; i < index; i++) {
+            temp = temp.next;
+        }
+
+        // Create new node, its next points to what temp.next was
+        Node node = new Node(val, temp.next);
+        temp.next = node; // temp's next now points to the new node
+        size++;            // Increment size
+    }
+
+    /**
+     * Public wrapper method for recursive insertion.
+     * Initiates the recursive process by calling the private helper method with the current head.
+     * Time Complexity: O(index)
+     * Space Complexity: O(index) due to recursion stack
+     */
+    public void insertRec(int val, int index) {
+        // The head might change during recursive insertion at index 0,
+        // so we update the head with the result of the recursive call.
+        head = insertRec(val, index, head);
+    }
+
+    /**
+     * Private recursive helper method to insert a node at a given index.
+     *
+     * Base Case:
+     * If `index` is 0, it means we've reached the position to insert. Create a new node,
+     * link its `next` to the current `node` (which will be the node originally at `index`),
+     * increment size, and return the new node.
+     *
+     * Recursive Step:
+     * Recursively call `insertRec` for the `node.next` with `index-1`.
+     * The result of this recursive call (the modified sub-list starting from `node.next`)
+     * is assigned back to `node.next`. This effectively links the current node
+     * to the rest of the list after the insertion.
+     *
+     * @param val The value to insert.
+     * @param index The target index for insertion.
+     * @param node The current node being processed in the recursion.
+     * @return The head of the (potentially modified) sub-list.
+     */
+    private Node insertRec(int val, int index, Node node) {
+        if (index == 0) { // Base case: reached the insertion point
+            Node temp = new Node(val, node); // Create new node, linking it to the current node
+            size++; // Increment size
+            return temp; // Return the new node as the head of this sub-list
+        }
+
+        // Recursive step: go to the next node, decrementing the index
+        node.next = insertRec(val, index - 1, node.next);
+        return node; // Return the current node (its 'next' might have been updated)
+    }
+
+    /**
+     * Deletes the first node in the list.
+     *
+     * Steps:
+     * 1. Store the value of the `head` node.
+     * 2. Update `head` to point to `head.next`.
+     * 3. If the list becomes empty after deletion, update `tail` to `null`.
+     * 4. Decrement the `size`.
+     * 5. Return the deleted value.
+     *
+     * Time Complexity: O(1)
+     * Space Complexity: O(1)
+     */
+    public int deleteFirst() {
+        if (head == null) {
+            throw new IllegalStateException("Cannot delete from an empty list.");
+        }
+        int val = head.value; // Store value of node to be deleted
+        head = head.next;      // Move head to the next node
+        if (head == null) {    // If list becomes empty, tail should also be null
+            tail = null;
+        }
+        size--;                // Decrement size
+        return val;            // Return deleted value
+    }
+
+    /**
+     * Helper method to get the node at a specific index.
+     * Used internally for deletion operations.
+     *
+     * Steps:
+     * 1. Start from the `head`.
+     * 2. Traverse `index` times, moving `node` to `node.next` in each step.
+     * 3. Return the node at the specified index.
+     *
+     * Time Complexity: O(index)
+     * Space Complexity: O(1)
+     */
+    public Node getNode(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index out of bounds.");
+        }
+        Node node = head; // Start from head
+        for (int i = 0; i < index; i++) { // Traverse to the desired index
+            node = node.next;
+        }
+        return node; // Return the node
+    }
+
+    /**
+     * Deletes the last node in the list.
+     *
+     * Steps:
+     * 1. Handle edge case: if size is 0 or 1, call `deleteFirst`.
+     * 2. Get the second-to-last node using `getNode(size-2)`.
+     * 3. Store the value of the current `tail`.
+     * 4. Update `tail` to the `secondLast` node.
+     * 5. Set `tail.next` to `null` to detach the old last node.
+     * 6. Decrement `size`.
+     * 7. Return the deleted value.
+     *
+     * Time Complexity: O(N) because `getNode(size-2)` requires traversal.
+     * Space Complexity: O(1)
+     */
+    public int deletelast() {
+        if (size <= 1) { // If 0 or 1 element, delete first handles it
+            return deleteFirst();
+        }
+
+        Node secondLast = getNode(size - 2); // Get the node before the current tail
+        int val = tail.value;                 // Store value of tail
+        tail = secondLast;                    // Update tail to secondLast
+        tail.next = null;                     // Detach the old last node
+        size--;                               // Decrement size
+        return val;                           // Return deleted value
+    }
+
+    /**
+     * Deletes the node at a specific index.
+     *
+     * Steps:
+     * 1. Handle edge cases: if index is 0, call `deleteFirst`; if index is `size-1`, call `deleteLast`.
+     * 2. Get the node *before* the target index using `getNode(index-1)`.
+     * 3. Store the value of the node to be deleted (`node.next.value`).
+     * 4. Update `node.next` to skip the target node (`node.next.next`), effectively removing it.
+     * 5. Decrement `size`.
+     * 6. Return the deleted value.
+     *
+     * Time Complexity: O(index) in the worst case (O(N) for deletion near end).
+     * Space Complexity: O(1)
+     */
+    public int delete(int index) {
+        if (index == 0) { // Delete first node
+            return deleteFirst();
+        }
+        if (index == size - 1) { // Delete last node
+            return deletelast();
+        }
+        if (index < 0 || index >= size) { // Invalid index check
+            throw new IndexOutOfBoundsException("Index out of bounds for deletion.");
+        }
+
+        Node prevNode = getNode(index - 1); // Get the node just before the one to be deleted
+        int val = prevNode.next.value;       // Store the value of the node to be deleted
+        prevNode.next = prevNode.next.next;  // Bypass the node to be deleted
+        size--;                              // Decrement size
+        return val;                          // Return deleted value
+    }
+
+    /**
+     * Finds and returns the Node object containing the specified value.
+     *
+     * Steps:
+     * 1. Start traversal from the `head`.
+     * 2. Iterate through the list until the end (`temp != null`).
+     * 3. If the `value` of the current node matches the target `value`, return the node.
+     * 4. If the end of the list is reached without finding the value, return `null`.
+     *
+     * Time Complexity: O(N) in the worst case (value not found or at the end).
+     * Space Complexity: O(1)
+     */
+    public Node find(int value) {
+        Node temp = head; // Start from head
+        while (temp != null) { // Iterate until end of list
+            if (temp.value == value) { // Check if current node's value matches
+                return temp; // Return the node if found
+            }
+            temp = temp.next; // Move to the next node
+        }
+        return null; // Value not found
+    }
+
+    /**
+     * Displays all elements of the linked list in sequence.
+     *
+     * Steps:
+     * 1. Start traversal from the `head`.
+     * 2. Print the value of the current node and " -> ".
+     * 3. Move to the next node until `temp` becomes `null`.
+     * 4. Print "end" to signify the end of the list.
+     *
+     * Time Complexity: O(N) (iterates through all N nodes).
+     * Space Complexity: O(1)
+     */
+    public void display() {
+        Node temp = head; // Start from head
+        while (temp != null) { // Iterate until end of list
+            System.out.print(temp.value + " -> ");
+            temp = temp.next; // Move to next node
+        }
+        System.out.println("end"); // Mark the end of the list
+    }
+}
+```
+
+### `LL.java` (Main Driver for Singly Linked List)
+
+```java
+package learningJava;
+
+public class LL {
+
+    public static void main(String[] args) {
+
+        // Notes on Singly Linked Lists:
+        // - Non-contiguous memory allocation: Nodes can be anywhere in memory.
+        // - Singly linked: Each node points only to the next one.
+        // - Uses 'head' and 'tail' pointers for efficient start/end operations.
+        // - Structure: (head)a -> b -> c -> d(tail) -> null
+        // - Cannot directly access an element by index (requires traversal from head).
+
+        LinkedList list = new LinkedList();
+
+        // Demonstrating insertFirst
+        list.insertFirst(3); // List: 3 -> end
+        list.insertFirst(4); // List: 4 -> 3 -> end
+        list.insertFirst(5); // List: 5 -> 4 -> 3 -> end
+
+        // Demonstrating insertLast
+        list.insertLast(2);  // List: 5 -> 4 -> 3 -> 2 -> end
+        list.insertLast(1);  // List: 5 -> 4 -> 3 -> 2 -> 1 -> end
+
+        System.out.print("Initial list: ");
+        list.display(); // Expected: 5 -> 4 -> 3 -> 2 -> 1 -> end
+        System.out.println("Size: " + list.getSize()); // Expected: 5
+
+        // Demonstrating insert at specific index
+        System.out.print("Insert 99 at index 3: ");
+        list.insert(99, 3); // List: 5 -> 4 -> 3 -> 99 -> 2 -> 1 -> end
+        list.display();
+        System.out.println("Size: " + list.getSize()); // Expected: 6
+
+        // Demonstrating deleteFirst
+        System.out.print("Delete first: ");
+        int deletedVal1 = list.deleteFirst(); // Deletes 5. List: 4 -> 3 -> 99 -> 2 -> 1 -> end
+        System.out.println("Deleted value: " + deletedVal1);
+        list.display();
+        System.out.println("Size: " + list.getSize()); // Expected: 5
+
+        // Demonstrating deleteLast
+        System.out.print("Delete last: ");
+        int deletedVal2 = list.deletelast(); // Deletes 1. List: 4 -> 3 -> 99 -> 2 -> end
+        System.out.println("Deleted value: " + deletedVal2);
+        list.display();
+        System.out.println("Size: " + list.getSize()); // Expected: 4
+
+        // Demonstrating delete at specific index
+        System.out.print("Delete at index 2 (value 99): ");
+        int deletedVal3 = list.delete(2); // Deletes 99. List: 4 -> 3 -> 2 -> end
+        System.out.println("Deleted value: " + deletedVal3);
+        list.display();
+        System.out.println("Size: " + list.getSize()); // Expected: 3
+
+        // Demonstrating recursive insert
+        System.out.print("List before recursive insert: ");
+        list.display();
+        System.out.print("Insert 999 at index 1 recursively: ");
+        list.insertRec(999, 1); // List: 4 -> 999 -> 3 -> 2 -> end
+        list.display();
+        System.out.println("Size: " + list.getSize()); // Expected: 4
+
+        // Demonstrating find
+        System.out.print("Find node with value 999: ");
+        LinkedList.Node foundNode = list.find(999);
+        if (foundNode != null) {
+            System.out.println("Found node with value: " + foundNode.value);
+        } else {
+            System.out.println("Node not found.");
+        }
+
+        System.out.print("Find node with value 1000: ");
+        foundNode = list.find(1000);
+        if (foundNode != null) {
+            System.out.println("Found node with value: " + foundNode.value);
+        } else {
+            System.out.println("Node not found.");
+        }
+    }
+}
+```
+
+### Time and Space Complexity Summary (Singly Linked List)
+
+| Operation        | Average Time Complexity | Worst Case Time Complexity | Space Complexity | Notes                                        |
+| :--------------- | :---------------------- | :------------------------- | :--------------- | :------------------------------------------- |
+| `insertFirst`    | O(1)                    | O(1)                       | O(1)             | Requires updating `head` and potentially `tail` |
+| `insertLast`     | O(1)                    | O(1)                       | O(1)             | Requires `tail` pointer                      |
+| `insert(val, idx)` | O(idx)                  | O(N)                       | O(1)             | Traversal to `idx-1`                         |
+| `insertRec(val, idx)` | O(idx)                  | O(N)                       | O(idx)           | Recursive call stack                         |
+| `deleteFirst`    | O(1)                    | O(1)                       | O(1)             | Requires updating `head` and potentially `tail` |
+| `deletelast`     | O(N)                    | O(N)                       | O(1)             | Traversal to `size-2` to find new `tail`     |
+| `delete(idx)`    | O(idx)                  | O(N)                       | O(1)             | Traversal to `idx-1`                         |
+| `find(value)`    | O(N)                    | O(N)                       | O(1)             | Traversal of entire list in worst case       |
+| `getNode(idx)`   | O(idx)                  | O(N)                       | O(1)             | Traversal to `idx`                           |
+| `display`        | O(N)                    | O(N)                       | O(1)             | Traversal of entire list                     |
+| `getSize`        | O(1)                    | O(1)                       | O(1)             | Direct access to `size` variable             |
+
+-----
+
+## 2\. Circular Linked List
+
+A circular linked list is a variation of a singly linked list where the last node points back to the first node (`head`), forming a circle. This eliminates the `null` termination found in standard singly linked lists.
+
+### Core Concepts
+
+  * **Node:** Similar to a singly linked list node (`value`, `next`).
+  * **Head:** Reference to the first node.
+  * **Tail:** Reference to the last node. In a circular linked list, `tail.next` points to `head`.
+
+### `CircularLinkedList.java` Implementation
+
+```java
+package learningJava;
+
+class CircularLinkedList {
+    Node head; // Reference to the first node
+    Node tail; // Reference to the last node
+
+    // Node class definition (private inner class)
+    class Node {
+        int val;  // Data stored in the node
+        Node next; // Reference to the next node
+
+        // Constructor for a node with only value
+        public Node(int val) {
+            this.val = val;
+        }
+
+        // Constructor for a node with value and next node reference
+        public Node(int val, Node next) {
+            this.val = val;
+            this.next = next;
+        }
+    }
+
+    // Constructor for CircularLinkedList
+    public CircularLinkedList() {
+        this.head = null; // Initially empty list
+        this.tail = null; // Initially empty list
+    }
+
+    /**
+     * Inserts a new node with the given value into the circular linked list.
+     * New nodes are typically inserted at the end for simplicity in circular lists.
+     *
+     * Steps:
+     * 1. Create a new Node with the provided value.
+     * 2. If the list is empty:
+     * a. Set `head` and `tail` to the new node.
+     * b. Make the new node point to itself (`node.next = node`) to form a circle.
+     * (Note: The current implementation makes `node.next = head; tail.next = node;` in general case
+     * and relies on `tail = head` for the first element. This is slightly different and requires
+     * that `head` and `tail` point to the same node, and that node's `next` points to itself for a single element.)
+     * 3. If the list is not empty:
+     * a. Set the `next` of the new node to the current `head` (to connect it to the beginning).
+     * b. Set the `next` of the current `tail` to the new node (to link the new node at the end).
+     * c. Update `tail` to point to the new node.
+     *
+     * Time Complexity: O(1)
+     * Space Complexity: O(1)
+     */
+    public void insert(int val) {
+        Node node = new Node(val); // Create new node
+
+        if (head == null) { // If the list is empty
+            head = node;     // New node is both head and tail
+            tail = head;
+            node.next = head; // In a single-node circular list, it points to itself
+            return;
+        }
+
+        node.next = head; // New node's next points to the current head
+        tail.next = node; // Current tail's next points to the new node
+        tail = node;      // Update tail to the new node
+    }
+
+    /**
+     * Displays all elements of the circular linked list.
+     *
+     * Steps:
+     * 1. Handle empty list case.
+     * 2. Start traversal from `head`.
+     * 3. Use a `do-while` loop because even if there's only one node, it needs to be printed,
+     * and `temp` will initially be `head`. The loop continues until `temp` points back to `head`.
+     * 4. Print the value of the current node and " -> ".
+     * 5. Move to the next node (`temp = temp.next`).
+     * 6. Print "⟳" to signify the circular nature.
+     *
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
+    public void display() {
+        Node temp = head; // Start from head
+        if (temp == null) { // Handle empty list
+            System.out.println("empty");
+            return;
+        }
+        do { // Use do-while to ensure at least one element is printed if list is not empty
+            System.out.print(temp.val + " -> ");
+            temp = temp.next; // Move to next node
+        } while (temp != head); // Continue until we loop back to head
+        System.out.println("⟳"); // Indicate circularity
+    }
+
+    /**
+     * Deletes the first occurrence of a node with the given value from the circular linked list.
+     *
+     * Steps:
+     * 1. Handle empty list case.
+     * 2. If the head node itself needs to be deleted:
+     * a. If it's the only node (`head == tail`), set `head` and `tail` to `null`.
+     * b. Otherwise, move `head` to `head.next` and update `tail.next` to the new `head`.
+     * 3. For other nodes:
+     * a. Traverse using a `do-while` loop, keeping track of the current node (`node`) and the next node (`n`).
+     * b. If `n.val` matches the target `value`:
+     * i. Bypass `n` by setting `node.next = n.next`.
+     * ii. If `n` was the `tail`, update `tail` to `node`.
+     * iii. Break the loop (as only the first occurrence is deleted).
+     * c. Move `node` to `node.next`.
+     * 4. The loop condition `node != head` handles wrapping around the circle.
+     *
+     * Time Complexity: O(N) (in worst case, needs to traverse entire list)
+     * Space Complexity: O(1)
+     */
+    public void delete(int value) {
+        Node node = head; // Start from head
+        if (node == null) { // Empty list, nothing to delete
+            return;
+        }
+
+        // Case 1: Deleting the head node
+        if (node.val == value) {
+            if (head == tail) { // Only one node in the list
+                head = null;
+                tail = null;
+            } else { // Multiple nodes, head needs to be updated
+                head = head.next;   // Move head to the next node
+                tail.next = head;   // Tail's next must point to the new head
+            }
+            return; // Deletion complete
+        }
+
+        // Case 2: Deleting a node other than the head
+        do {
+            Node n = node.next; // n is the potential node to be deleted
+            if (n.val == value) {
+                node.next = n.next; // Bypass n, linking current node to n's next
+                if (n == tail) { // If the deleted node was the tail, update tail
+                    tail = node; // Current node becomes the new tail
+                }
+                return; // Deletion complete for the first occurrence
+            }
+            node = node.next; // Move to the next node
+        } while (node != head); // Continue until we wrap around to the head
+    }
+}
+```
+
+### `CLL.java` (Main Driver for Circular Linked List)
+
+```java
+package learningJava;
+
+public class CLL {
+    public static void main(String[] args) {
+        CircularLinkedList cll = new CircularLinkedList();
+
+        // Inserting elements
+        cll.insert(5); // List: 5 -> ⟳
+        cll.insert(4); // List: 4 -> 5 -> ⟳
+        cll.insert(3); // List: 3 -> 4 -> 5 -> ⟳
+        cll.insert(2); // List: 2 -> 3 -> 4 -> 5 -> ⟳
+
+        System.out.print("Initial CLL: ");
+        cll.display(); // Expected: 2 -> 3 -> 4 -> 5 -> ⟳
+
+        // Deleting element '3' (middle)
+        System.out.print("Deleting 3: ");
+        cll.delete(3);
+        cll.display(); // Expected: 2 -> 4 -> 5 -> ⟳
+
+        // Deleting element '5' (tail)
+        System.out.print("Deleting 5 (tail): ");
+        cll.delete(5);
+        cll.display(); // Expected: 2 -> 4 -> ⟳
+
+        // Deleting element '2' (head)
+        System.out.print("Deleting 2 (head): ");
+        cll.delete(2);
+        cll.display(); // Expected: 4 -> ⟳
+
+        // Deleting the last remaining element '4'
+        System.out.print("Deleting 4 (last element): ");
+        cll.delete(4);
+        cll.display(); // Expected: empty
+    }
+}
+```
+
+### Time and Space Complexity Summary (Circular Linked List)
+
+| Operation        | Average Time Complexity | Worst Case Time Complexity | Space Complexity | Notes                                                              |
+| :--------------- | :---------------------- | :------------------------- | :--------------- | :----------------------------------------------------------------- |
+| `insert`         | O(1)                    | O(1)                       | O(1)             | Inserts at the end by updating `tail.next` and `tail`              |
+| `display`        | O(N)                    | O(N)                       | O(1)             | Traverses all N nodes using `do-while`                             |
+| `delete(value)`  | O(N)                    | O(N)                       | O(1)             | Requires traversal to find the node or its predecessor             |
+
+-----
+
+## 3\. Doubly Linked List
+
+A doubly linked list is a linear data structure where each node contains a data element and two pointers: one to the next node in the sequence (`next`) and one to the previous node (`prev`). This bidirectional linking allows for traversal in both forward and backward directions.
+
+### Core Concepts
+
+  * **Node:** The fundamental building block. Each node typically contains:
+      * `value`: The data stored in the node.
+      * `next`: A reference to the next node.
+      * `prev`: A reference to the previous node. The first node's `prev` reference is `null`. The last node's `next` reference is `null`.
+  * **Head:** A reference to the first node of the list.
+
+### `DoublyLinkedList.java` Implementation
+
+```java
+package learningJava;
+
+class DoublyLinkedList {
+
+    Node head; // Reference to the first node of the list
+
+    // Node class definition (private inner class)
+    class Node {
+        int val;  // Data stored in the node
+        Node next; // Reference to the next node
+        Node prev; // Reference to the previous node
+
+        // Constructor for a node with only value (typically for first node)
+        public Node(int val) {
+            this.val = val;
+        }
+
+        // Constructor for a node with value, next, and previous node references
+        public Node(int val, Node next, Node prev) {
+            this.val = val;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+
+    /**
+     * Inserts a new node with the given value at the beginning of the list.
+     *
+     * Steps:
+     * 1. Create a new Node.
+     * 2. Set the `next` of the new node to the current `head`.
+     * 3. Set the `prev` of the new node to `null` (it's the new first node).
+     * 4. If the list was not empty (`head != null`), update the `prev` of the *old* `head` to the new node.
+     * 5. Update `head` to point to the new node.
+     *
+     * Time Complexity: O(1)
+     * Space Complexity: O(1)
+     */
+    public void insertFirst(int val) {
+        Node node = new Node(val); // Create new node
+        node.next = head;          // New node's next points to current head
+        node.prev = null;          // New node's prev is null (it's the new first)
+        if (head != null) {        // If list was not empty, old head's prev points to new node
+            head.prev = node;
+        }
+        head = node;               // Head now points to the new node
+    }
+
+    /**
+     * Inserts a new node with the given value at the end of the list.
+     *
+     * Steps:
+     * 1. Handle empty list case: if `head` is `null`, call `insertFirst`.
+     * 2. Traverse to the last node.
+     * 3. Create a new Node, linking its `next` to `null` and its `prev` to the old last node.
+     * 4. Update the `next` of the old last node to point to the new node.
+     *
+     * Time Complexity: O(N) (requires traversal to the end)
+     * Space Complexity: O(1)
+     */
+    public void insertLast(int val) {
+        if (head == null) { // If list is empty, insert first
+            insertFirst(val);
+            return;
+        }
+        Node temp = head; // Start from head
+        while (temp.next != null) { // Traverse to the last node
+            temp = temp.next;
+        }
+        // Create new node: value, next (null), prev (temp - the old last node)
+        temp.next = new Node(val, null, temp);
+    }
+
+    /**
+     * Inserts a new node with the given value at a specific index.
+     *
+     * Steps:
+     * 1. Handle edge case: if `index` is 0, call `insertFirst`.
+     * 2. Traverse to the node *before* the target index.
+     * 3. Create a new Node, linking its `next` to `temp.next` and its `prev` to `temp`.
+     * 4. Update `temp.next` to point to the new node.
+     * 5. If the new node is not the last node (`new_node.next != null`), update `new_node.next.prev`
+     * to point back to the new node.
+     *
+     * Time Complexity: O(index) in the worst case (O(N) for insertion near end).
+     * Space Complexity: O(1)
+     */
+    public void insert(int index, int value) {
+        if (index == 0) { // Inserting at the beginning
+            insertFirst(value);
+            return;
+        }
+        // If inserting at the end, it is handled by the loop below implicitly,
+        // as temp.next will be null, and new Node's next will be null.
+        // The displayReverse method would need a 'tail' pointer or
+        // a traversal to the end to start. For this specific 'insert' method,
+        // it behaves correctly even for `index == size`.
+
+        Node temp = head; // Start from head
+        // Traverse to the node *before* the insertion point (index-1)
+        for (int i = 0; i < index - 1; i++) {
+            if (temp == null) { // Handle index out of bounds if list is shorter than index
+                System.err.println("Error: Index out of bounds for insertion.");
+                return;
+            }
+            temp = temp.next;
+        }
+
+        // Check if temp is null (e.g., trying to insert at index 5 in a list of size 2)
+        if (temp == null) {
+             System.err.println("Error: Index out of bounds for insertion.");
+             return;
+        }
+
+        // Create the new node: value, temp.next (old next node), temp (previous node)
+        Node newNode = new Node(value, temp.next, temp);
+        temp.next = newNode; // Link previous node to new node
+
+        // If the new node is not the last node, update the 'prev' of the node after it
+        if (newNode.next != null) {
+            newNode.next.prev = newNode;
+        }
+    }
+
+    /**
+     * Displays all elements of the doubly linked list in forward direction.
+     *
+     * Steps:
+     * 1. Start traversal from `head`.
+     * 2. Print the value of the current node and " <-> ".
+     * 3. Move to the next node until `temp` becomes `null`.
+     * 4. Print "end" to signify the end of the list.
+     *
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
+    public void display() {
+        Node temp = head; // Start from head
+        while (temp != null) { // Iterate until end of list
+            System.out.print(temp.val + " <-> ");
+            temp = temp.next; // Move to next node
+        }
+        System.out.println("end"); // Mark the end of the list
+    }
+
+    /**
+     * Displays all elements of the doubly linked list in reverse direction.
+     *
+     * Steps:
+     * 1. Traverse to the last node first (since we only have `head`).
+     * 2. From the last node, traverse backward using the `prev` pointer.
+     * 3. Print the value of the current node and " <-> ".
+     * 4. Move to the previous node until `temp` becomes `null`.
+     * 5. Print "start" to signify the beginning of the list.
+     *
+     * Time Complexity: O(N) (one pass to find tail, one pass to traverse backward)
+     * Space Complexity: O(1)
+     */
+    public void displayReverse() {
+        Node temp = head; // Start from head
+
+        if (temp == null) {
+            System.out.println("start (empty list)");
+            return;
+        }
+
+        // First, go to the last node
+        while (temp.next != null) {
+            temp = temp.next;
+        }
+
+        // Now, traverse backward from the last node
+        while (temp != null) {
+            System.out.print(temp.val + " <-> ");
+            temp = temp.prev; // Move to previous node
+        }
+        System.out.println("start"); // Mark the start of the list
+    }
+}
+```
+
+### `DLL.java` (Main Driver for Doubly Linked List)
+
+```java
+package learningJava;
+
+public class DLL {
+    public static void main(String[] args) {
+        DoublyLinkedList dll = new DoublyLinkedList();
+
+        // Demonstrating insertFirst
+        dll.insertFirst(1); // List: 1 <-> end
+        dll.insertFirst(2); // List: 2 <-> 1 <-> end
+        dll.insertFirst(3); // List: 3 <-> 2 <-> 1 <-> end
+        dll.insertFirst(4); // List: 4 <-> 3 <-> 2 <-> 1 <-> end
+        dll.insertFirst(5); // List: 5 <-> 4 <-> 3 <-> 2 <-> 1 <-> end
+        dll.insertFirst(6); // List: 6 <-> 5 <-> 4 <-> 3 <-> 2 <-> 1 <-> end
+
+        System.out.print("After multiple insertFirst: ");
+        dll.display(); // Expected: 6 <-> 5 <-> 4 <-> 3 <-> 2 <-> 1 <-> end
+        System.out.println();
+
+        // Demonstrating insertLast
+        dll.insertLast(0); // List: 6 <-> 5 <-> 4 <-> 3 <-> 2 <-> 1 <-> 0 <-> end
+        System.out.print("After insertLast(0): ");
+        dll.display();
+        System.out.println();
+
+        // Demonstrating insert at specific index
+        System.out.print("Insert 99 at index 2: ");
+        dll.insert(2, 99); // List: 6 <-> 5 <-> 99 <-> 4 <-> 3 <-> 2 <-> 1 <-> 0 <-> end
+        dll.display();
+        System.out.println();
+
+        System.out.print("Insert 100 at index 3: ");
+        dll.insert(3, 100); // List: 6 <-> 5 <-> 99 <-> 100 <-> 4 <-> 3 <-> 2 <-> 1 <-> 0 <-> end
+        dll.display();
+        System.out.println();
+
+        System.out.print("Insert 9999 at index 1: ");
+        dll.insert(1, 9999); // List: 6 <-> 9999 <-> 5 <-> 99 <-> 100 <-> 4 <-> 3 <-> 2 <-> 1 <-> 0 <-> end
+        dll.display();
+        System.out.println();
+
+        System.out.print("Display in reverse: ");
+        dll.displayReverse(); // Expected: 0 <-> 1 <-> 2 <-> 3 <-> 4 <-> 100 <-> 99 <-> 5 <-> 9999 <-> 6 <-> start
+        System.out.println();
+
+        // Add some deletion methods later, as they are not present in your provided DLL code.
+        // Example (conceptual, not implemented in your code yet):
+        // System.out.print("Deleting first: ");
+        // dll.deleteFirst();
+        // dll.display();
+        // System.out.println();
+        // System.out.print("Deleting last: ");
+        // dll.deleteLast();
+        // dll.display();
+        // System.out.println();
+        // System.out.print("Deleting at index 3: ");
+        // dll.delete(3);
+        // dll.display();
+        // System.out.println();
+    }
+}
+```
+
+### Time and Space Complexity Summary (Doubly Linked List)
+
+| Operation         | Average Time Complexity | Worst Case Time Complexity | Space Complexity | Notes                                                         |
+| :---------------- | :---------------------- | :------------------------- | :--------------- | :------------------------------------------------------------ |
+| `insertFirst`     | O(1)                    | O(1)                       | O(1)             | Updates `head` and `prev` of old `head`                       |
+| `insertLast`      | O(N)                    | O(N)                       | O(1)             | Requires traversal to the last node. (Could be O(1) with `tail` pointer) |
+| `insert(idx, val)` | O(idx)                  | O(N)                       | O(1)             | Traversal to `idx-1`. Updates `next` and `prev` pointers.     |
+| `deleteFirst`     | O(1)                    | O(1)                       | O(1)             | (Not implemented) Would update `head` and `head.prev` to `null` |
+| `deleteLast`      | O(1)                    | O(1)                       | O(1)             | (Not implemented) Would require a `tail` pointer to be O(1), otherwise O(N) |
+| `delete(idx)`     | O(idx)                  | O(N)                       | O(1)             | (Not implemented) Traversal to `idx-1`                        |
+| `display`         | O(N)                    | O(N)                       | O(1)             | Traversal of entire list                                      |
+| `displayReverse`  | O(N)                    | O(N)                       | O(1)             | One pass to find tail, one pass to traverse backward.         |
+
+
+</details>
+
+-----
