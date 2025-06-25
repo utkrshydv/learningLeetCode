@@ -269,6 +269,22 @@ Your 2D ArrayList: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 */
 ```
 
+🔧 What Happens When ArrayList Is Full?
+When an ArrayList is full (i.e., it reaches its current capacity), and you add one more element using .add(), Java does the following automatically:
+
+✅ Under the Hood:
+Creates a new array with a larger capacity (usually 1.5x or 2x the old size).
+
+Copies all elements from the old array into the new one.
+
+Adds the new element to the new array.
+
+The internal elementData reference now points to the new array.
+
+This resizing happens behind the scenes, and you don't have to do anything manually.
+
+
+
 > **Important:** You **must** initialize each inner `ArrayList` by calling `new ArrayList<>()` before adding elements.
 
 </details>
