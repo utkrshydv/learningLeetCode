@@ -22,17 +22,8 @@ class Solution {
 
         sb.reverse();
 
-        int firstNonZeroIndex = 0;
-        while(firstNonZeroIndex < sb.length() -1 && sb.charAt(firstNonZeroIndex) == '0'){
-            firstNonZeroIndex++;
-        }
+        String result = sb.toString().replaceFirst("^0+", "");
 
-        String result = sb.substring(firstNonZeroIndex);
-
-        if(result.isEmpty()){
-            return "0";
-        }
-
-        return result;
+        return result.isEmpty() ? "0" : result;
     }
 }
