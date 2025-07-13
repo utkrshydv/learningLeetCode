@@ -6,7 +6,6 @@ class Solution {
        reverse(nums, 0, size);
        reverse(nums, 0, d-1);
        reverse(nums,d, size);
-
     }
 
     static void reverse(int[] arr, int start, int end){
