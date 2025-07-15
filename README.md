@@ -1145,6 +1145,7 @@ class CircularLinkedList {
             return;
         }
 
+
         // Case 1: Deleting the head node
         if (node.val == value) {
             if (head == tail) { // Only one node in the list
