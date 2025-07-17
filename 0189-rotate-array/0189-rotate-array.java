@@ -1,5 +1,5 @@
 class Solution {
-    public void rotate(int[] nums, int k) {
+    public void rotateArray(int[] nums, int k) {
        int size = nums.length - 1;
        int d = k%(size+1);
 
