@@ -6,16 +6,15 @@ class Solution {
         freq[num+1000]++;
      }
 
-     Set<Integer> seen = new HashSet<>();
+     Arrays.sort(freq);
 
-     for(int count : freq){
-        if(count > 0){
-            if(seen.contains(count)){
-                return false;
-            }
-            seen.add(count);
+     for(int i = 1; i < 2001; i++){
+        if(freq[i] != 0 && freq[i] == freq[i-1]){
+            return false;
         }
      }
+
+    
      return true;
     }
 }
