@@ -1631,6 +1631,113 @@ public class DLL {
  <summary>
   🔎 Searching & Sorting
  </summary>
+
+### 🧠 Binary Search - Definition & Basics
+
+Binary Search is a highly efficient searching algorithm used to find an element's position in a **sorted array**.
+
+  * It works on the principle of **"Divide and Conquer"**.
+  * The algorithm repeatedly divides the search interval in half. If the value of the search key is less than the item in the middle of the interval, it narrows the interval to the lower half. Otherwise, it narrows it to the upper half.
+  * This process continues until the value is found or the interval is empty.
+
+> **Crucial Prerequisite:** The array **must be sorted** before performing a Binary Search. If the array is not sorted, the results will be incorrect.
+
+-----
+
+#### 📈 Complexity & Scenarios
+
+  * **Time Complexity:**
+
+      * **Best Case: $O(1)$** - This occurs when the `target` element is the middle element of the array, found on the very first comparison.
+      * **Average Case: $O(\\log n)$** - The algorithm halves the search space with each comparison.
+      * **Worst Case: $O(\\log n)$** - This occurs when the `target` is either the last element to be checked or is not present in the array at all.
+
+  * **Space Complexity:**
+
+      * **$O(1)$** (Iterative) - Your implementation uses a constant amount of extra space for pointers (`start`, `end`, `mid`), making it very memory-efficient.
+      * *(For reference, a recursive implementation would have a space complexity of $O(\\log n)$ due to the memory used by the call stack).*
+
+-----
+
+#### 💻 Standard Binary Search (Code Explanation)
+
+This is the classic implementation of Binary Search, which assumes the array is sorted in ascending order.
+
+```java
+static int binarySearch(int[] arr, int target){
+    int start = 0;
+    int end = arr.length - 1;
+
+    while(start <= end){
+        // Find the middle element
+        int mid = start + (end - start) / 2;
+
+        if(target < arr[mid]){
+            end = mid - 1; // Target is in the left half
+        } else if (target > arr[mid]){
+            start = mid + 1; // Target is in the right half
+        } else {
+            return mid; // Target found
+        }
+    }
+
+    return -1; // Target not found
+}
+```
+
+  * `int start = 0; int end = arr.length - 1;`: Initializes two pointers. `start` points to the first element and `end` points to the last, defining the initial search space.
+  * `while(start <= end)`: The loop continues as long as the search space is valid. If `start` becomes greater than `end`, it means the element is not in the array.
+  * `int mid = start + (end - start) / 2;`: Calculates the middle index. This method is preferred over `(start + end) / 2` to prevent a potential integer overflow if `start` and `end` are very large numbers.
+  * `if(target < arr[mid])`: If the `target` is smaller than the middle element, it must be in the left half of the current search space. We discard the right half by setting `end = mid - 1`.
+  * `else if (target > arr[mid])`: If the `target` is larger than the middle element, it must be in the right half. We discard the left half by setting `start = mid + 1`.
+  * `else { return mid; }`: If neither of the above is true, `target` must be equal to `arr[mid]`. The element is found, and its index `mid` is returned.
+  * `return -1;`: This line is reached only if the `while` loop finishes, which means the `target` was not found.
+
+-----
+
+#### 💡 Order-Agnostic Binary Search
+
+This is a clever modification of Binary Search that works on a sorted array without knowing whether it's sorted in **ascending** or **descending** order.
+
+```java
+static int orderAgnosticBS(int[] arr, int target){
+    int start = 0;
+    int end = arr.length - 1;
+
+    // Check if the array is sorted in ascending order
+    boolean isAsc = arr[start] < arr[end];
+
+    while(start <= end){
+        int mid = start + (end - start) / 2;
+
+        if(arr[mid] == target){
+            return mid;
+        }
+
+        if(isAsc){ // Logic for Ascending Order
+            if(target < arr[mid]){
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        } else { // Logic for Descending Order
+            if(target > arr[mid]){
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+    }
+    return -1;
+}
+```
+
+  * `boolean isAsc = arr[start] < arr[end];`: This is the key step. It checks if the first element is smaller than the last. If it is, we assume the array is sorted in ascending order; otherwise, we assume descending.
+  * `if(isAsc)`: If the array is ascending, the logic is identical to the standard `binarySearch` implementation.
+  * `else { ... }`: If the array is **descending**, the logic is reversed:
+      * `if(target > arr[mid])`: In a descending array, a larger target value would be found on the **left side**. So, we discard the right half by setting `end = mid - 1`.
+      * `else`: Conversely, a smaller target value would be on the **right side**, so we discard the left half by setting `start = mid + 1`.
+
 </details>
 
 -----
