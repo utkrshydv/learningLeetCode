@@ -1616,3 +1616,15 @@ public class DLL {
   📚 Stacks & Queues
  </summary>
 </details>
+
+-----
+
+<details>
+ <summary>
+  🗺️ HashMaps & HashSets
+ </summary>
+</details>
+
+-----
+
+
