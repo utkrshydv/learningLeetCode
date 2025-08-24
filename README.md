@@ -1627,4 +1627,12 @@ public class DLL {
 
 -----
 
+<details>
+ <summary>
+  🔎 Searching & Sorting
+ </summary>
+</details>
+
+-----
+
 
