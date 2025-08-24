@@ -1810,3 +1810,259 @@ static void swap(int[] arr, int a, int b){
 
 ---
 
+### 🧠 Merge Sort - Definition & Basics
+
+Merge Sort is a highly efficient, comparison-based sorting algorithm that operates on the **Divide and Conquer** principle. It's one of the most reliable sorting algorithms due to its consistent performance.
+
+* **Divide:** The algorithm starts by recursively dividing the main array into two halves. This process continues until each subarray contains only a single element (a single-element array is considered inherently sorted).
+* **Conquer (Merge):** Once the array is fully broken down, the algorithm begins to merge the smaller, sorted subarrays back together. It compares elements from adjacent subarrays and combines them in sorted order into a new, larger array. This merging process continues until all subarrays have been combined back into a single, fully sorted array.
+
+> Merge Sort is a **stable sort**, which means that elements with equal values maintain their original relative order. Its performance is predictable and not affected by the initial order of the data.
+
+---
+
+#### 📈 Complexity & Scenarios
+
+* **Time Complexity:**
+
+  * **Best Case: O(n log n)**
+  * **Average Case: O(n log n)**
+  * **Worst Case: O(n log n)**
+
+    * The time complexity is consistent because the array is always split into two halves, and the merging process for all elements takes linear time (O(n)) at each level of recursion. There are log n levels of recursion.
+
+* **Space Complexity:**
+
+  * **O(n)** - The primary drawback of the standard Merge Sort is its space complexity. It requires additional memory proportional to the size of the input array to store the temporary subarrays during the merge step. This is why your first implementation is not considered "in-place."
+
+---
+
+#### 💻 Out-of-Place Merge Sort (Code Explanation)
+
+This implementation is the classic recursive Merge Sort. It creates new arrays at each step, making it easier to understand but requiring more memory.
+
+```java
+static int[] mergeSort(int[] arr){
+    if(arr.length == 1){
+        return arr;
+    }
+
+    int mid = arr.length / 2;
+
+    int[] left = mergeSort(Arrays.copyOfRange(arr, 0, mid));
+    int[] right = mergeSort(Arrays.copyOfRange(arr, mid, arr.length));
+
+    return merge(left, right);
+}
+
+static int[] merge(int[] first, int[] second){
+    int[] mix = new int[first.length + second.length];
+    int i = 0, j = 0, k = 0;
+
+    // Compare elements from both arrays and add the smaller one to the mix
+    while(i < first.length && j < second.length) {
+        if (first[i] < second[j]) {
+            mix[k] = first[i];
+            i++;
+        } else {
+            mix[k] = second[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy any remaining elements from the first array
+    while(i < first.length){
+        mix[k] = first[i];
+        i++; k++;
+    }
+
+    // Copy any remaining elements from the second array
+    while(j < second.length){
+        mix[k] = second[j];
+        j++; k++;
+    }
+    return mix;
+}
+```
+
+* **`mergeSort(int[] arr)` Function:**
+
+  * **Base Case:** `if(arr.length == 1)` is the crucial stopping condition for the recursion. A single-element array is already sorted.
+  * **Divide:** `Arrays.copyOfRange` creates two new arrays, `left` and `right`, representing the two halves of the current array.
+  * **Recursive Calls:** `mergeSort` is called on both halves. This continues until the base case is reached for all subarrays.
+  * **Conquer:** The sorted `left` and `right` arrays are passed to the `merge` function, which combines them into a single sorted array and returns it.
+
+* **`merge(int[] first, int[] second)` Function:**
+
+  * **Initialization:** A new array `mix` is created to hold the result. Pointers `i`, `j`, and `k` track the current position in the `first`, `second`, and `mix` arrays, respectively.
+  * **Main Merge Loop:** Compares `first[i]` and `second[j]`, placing the smaller element into `mix[k]`, and then increments the appropriate pointers.
+  * **Copying Leftovers:** After the main loop, one of the arrays might still have elements left. The next two `while` loops efficiently copy these remaining elements into `mix`.
+  * **Return:** The newly created and sorted `mix` array is returned.
+
+---
+
+#### 💡 "In-Place" Merge Sort (Code Explanation)
+
+This version modifies the original array instead of creating new ones at each recursive step. However, it is not truly "in-place" (O(1) space) because the `mergeInPlace` helper method still allocates a temporary array for the merging process.
+
+```java
+static void mergeSortInPlace(int[] arr, int start, int end){
+    // The range (end - start) represents the size of the current subarray
+    if(end - start == 1){
+        return;
+    }
+
+    int mid = start + (end - start) / 2;
+
+    mergeSortInPlace(arr, start, mid);
+    mergeSortInPlace(arr, mid, end);
+    mergeInPlace(arr, start, mid, end);
+}
+
+static void mergeInPlace(int[] arr, int start, int mid, int end){
+    int[] mix = new int[end - start];
+    int i = start;
+    int j = mid;
+    int k = 0;
+
+    // Merging logic is the same, but reads from the original array
+    while(i < mid && j < end){
+        if(arr[i] < arr[j]){
+            mix[k] = arr[i];
+            i++;
+        } else {
+            mix[k] = arr[j];
+            j++;
+        }
+        k++;
+    }
+    while(i < mid){
+        mix[k] = arr[i];
+        i++; k++;
+    }
+    while(j < end){
+        mix[k] = arr[j];
+        j++; k++;
+    }
+
+    // Copy the sorted temporary array back into the original array
+    System.arraycopy(mix, 0, arr, start, mix.length);
+}
+```
+
+* **`mergeSortInPlace(int[] arr, int start, int end)` Function:**
+
+  * **Base Case:** The recursion stops when the subarray size (`end - start`) is 1.
+  * **Divide:** Instead of creating new arrays, this version works with indices. It calculates `mid` and makes recursive calls for the left half (`start` to `mid`) and the right half (`mid` to `end`) of the *original* array.
+  * **Conquer:** It calls `mergeInPlace` to sort and merge the sections defined by `start`, `mid`, and `end` within the main `arr`.
+
+* **`mergeInPlace(int[] arr, int start, int mid, int end)` Function:**
+
+  * **Temporary Array:** A `mix` array is still needed, sized to fit the current segment (`end - start`).
+  * **Merging:** The logic is identical to the out-of-place version, but it uses `start`, `mid`, and `end` to read the correct portions from the original `arr`.
+  * **Copying Back:** This is the key step. `System.arraycopy` is a highly efficient way to copy the contents of the sorted `mix` array back into the original `arr` at the correct position (`start`). This overwrites the unsorted data with the sorted version for that segment.
+
+---
+
+### 🧠 Quick Sort - Definition & Basics
+
+Quick Sort is a highly efficient, in-place, comparison-based sorting algorithm that uses the **Divide and Conquer** strategy. Its average-case performance is one of the best, making it a common choice for general-purpose sorting.
+
+The process involves three main steps:
+
+1. **Pivot Selection:** An element is chosen from the array and designated as the "pivot."
+2. **Partitioning:** The array is rearranged so that all elements smaller than the pivot are placed before it, and all elements greater than the pivot are placed after it. After this step, the pivot is in its final sorted position.
+3. **Recursion:** The algorithm recursively applies the above steps to the two sub-arrays (the one with smaller elements and the one with larger elements).
+
+> While extremely fast on average, Quick Sort's main drawback is its potential for poor worst-case performance if the pivot is not chosen wisely. Unlike Merge Sort, it is also an **unstable** algorithm, meaning the relative order of equal elements is not guaranteed to be preserved.
+
+---
+
+#### 🎯 Choosing a Pivot
+
+The choice of the pivot element is critical to the efficiency of Quick Sort. A good pivot partitions the array into two roughly equal halves, leading to the best-case **O(n log n)** performance. A consistently bad pivot leads to the worst-case **O(n²)** scenario.
+
+* **Middle Element (Your approach):** `pivot = nums[mid]`. This is a reasonable strategy that avoids the worst-case scenario for already-sorted or reverse-sorted arrays.
+* **First or Last Element:** Simple to implement but can cause worst-case behavior on sorted arrays.
+* **Random Element:** A robust method that helps prevent worst-case scenarios from occurring due to specific data patterns.
+* **Median-of-Three:** A very common and effective strategy. It involves taking the first, middle, and last elements of the partition and choosing their median as the pivot. This makes a worst-case partition much less likely.
+
+---
+
+#### 📈 Complexity & Scenarios
+
+* **Time Complexity:**
+
+  * **Best Case: O(n log n)** – Occurs when the pivot selection consistently divides the array into two equal-sized sub-arrays.
+  * **Average Case: O(n log n)** – This is the expected performance for random data, which is why Quick Sort is so widely used.
+  * **Worst Case: O(n²)** – Occurs with consistently poor pivot choices (e.g., always picking the smallest or largest element). This leads to unbalanced partitions where one sub-array has n-1 elements and the other has 0, degrading the algorithm's performance significantly.
+
+* **Space Complexity:**
+
+  * **O(log n) (Average Case)** – This space is used by the recursion call stack. Because partitions are balanced on average, the recursion depth is logarithmic.
+  * **O(n) (Worst Case)** – In the worst-case scenario of unbalanced partitions, the recursion depth can become linear.
+
+---
+
+#### 💻 Code Explanation
+
+This code implements the Quick Sort algorithm using the middle element as the pivot and partitioning the array in-place.
+
+```java
+static void QuickSort(int[] nums, int low, int high){
+    // Base case: If the partition has 0 or 1 elements, it's already sorted.
+    if(low >= high){
+        return;
+    }
+
+    int start = low;
+    int end = high;
+    int mid = start + (end - start) / 2;
+    int pivot = nums[mid];
+
+    // Partitioning phase
+    while(start <= end){
+        // Find an element on the left side that should be on the right
+        while(nums[start] < pivot){
+            start++;
+        }
+        // Find an element on the right side that should be on the left
+        while(nums[end] > pivot){
+            end--;
+        }
+
+        // Swap the two elements if the pointers haven't crossed
+        if(start <= end){
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        }
+    }
+
+    // Now pivot is at its correct index, recursively sort the two sub-arrays
+    QuickSort(nums, low, end);
+    QuickSort(nums, start, high);
+}
+```
+
+* **Base Case (`if(low >= high)`):** The recursion terminates when a sub-array is empty or contains just one element.
+* **Pivot Selection:** The `pivot` is chosen as the element in the middle of the current `low` to `high` range.
+* **Partitioning Loop (`while(start <= end)`):** This is the core logic where the array is rearranged.
+
+  * The first inner `while` loop moves the `start` pointer to the right until it finds an element that is greater than or equal to the `pivot`.
+  * The second inner `while` loop moves the `end` pointer to the left until it finds an element that is less than or equal to the `pivot`.
+  * Once both pointers stop, the `if(start <= end)` condition checks if they haven't crossed. If they haven't, it means we've found two elements on the wrong sides of the pivot, so they are **swapped**.
+  * After the swap, `start` and `end` are moved inward to continue the search.
+* **Recursive Calls:**
+
+  * `QuickSort(nums, low, end)`: Recursively sorts the left sub-array (elements less than the pivot).
+  * `QuickSort(nums, start, high)`: Recursively sorts the right sub-array (elements greater than the pivot).
+
+---
+</details>
+
+---
+
