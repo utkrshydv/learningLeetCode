@@ -1737,9 +1737,76 @@ static int orderAgnosticBS(int[] arr, int target){
   * `else { ... }`: If the array is **descending**, the logic is reversed:
       * `if(target > arr[mid])`: In a descending array, a larger target value would be found on the **left side**. So, we discard the right half by setting `end = mid - 1`.
       * `else`: Conversely, a smaller target value would be on the **right side**, so we discard the left half by setting `start = mid + 1`.
-
-</details>
-
 -----
 
+### 🧠 Insertion Sort - Definition & Basics
+
+Insertion Sort is a simple, in-place sorting algorithm that builds the final sorted array one item at a time. It is much less efficient on large lists than more advanced algorithms like Quicksort or Mergesort, but it provides several advantages.
+
+* It works by taking elements from the unsorted part and inserting them into their correct position in the sorted part.
+* The algorithm iterates through the input elements, and for each element, it finds its correct position within the already sorted part of the array and shifts the other elements to make space.
+* This is analogous to how many people sort a hand of playing cards.
+
+> Insertion Sort is an **adaptive** sorting algorithm, meaning it becomes faster if the input array is already partially sorted.
+
+---
+
+#### ✅ When to Use Insertion Sort
+
+Despite its \$O(n^2)\$ average-case complexity, Insertion Sort is very effective in specific scenarios:
+
+* **Small Datasets:** It has very low overhead and is often faster than more complex algorithms for small arrays (e.g., fewer than 15-20 elements).
+* **Nearly Sorted Arrays:** If the array is almost sorted, Insertion Sort performs close to linear time (\$O(n)\$) because the inner loop will rarely need to shift elements.
+* **When Memory is Limited:** It is an **in-place** algorithm, meaning it requires only a constant \$O(1)\$ amount of extra memory.
+* **When Stability is Required:** Insertion Sort is a **stable** sort, meaning that elements with equal values maintain their original relative order after sorting.
+* **Hybrid Sorting:** Because of its efficiency with small lists, Insertion Sort is often used as a component in more sophisticated **hybrid algorithms**. For example, Timsort and Introsort switch to Insertion Sort for sorting small partitions of the main array.
+
+---
+
+#### 📈 Complexity & Scenarios
+
+* **Time Complexity:**
+
+  * **Best Case: \$O(n)\$** - Occurs when the array is already sorted. The inner loop condition `arr[j] < arr[j-1]` is always false, so it only performs a single comparison for each element.
+  * **Average Case: \$O(n^2)\$** - Occurs when the elements are in a random or jumbled order.
+  * **Worst Case: \$O(n^2)\$** - Occurs when the array is sorted in reverse order. Each element must be compared with and shifted past all other elements in the sorted portion.
+
+* **Space Complexity:**
+
+  * **\$O(1)\$** - The sort is performed in-place using only a few variables for iteration and swapping, requiring no significant additional memory.
+
+---
+
+#### 💻 Code Explanation
+
+```java
+static void insertionSort(int[] arr){
+    // The outer loop iterates through the unsorted part of the array
+    for(int i = 0 ; i < arr.length - 1; i++){
+        // The inner loop takes the current element and inserts it into the sorted part
+        for(int j = i + 1; j > 0; j--){
+            if(arr[j] < arr[j-1]){
+                swap(arr, j, j-1);
+            } else {
+                // Once the element is in the correct place, break the inner loop
+                break;
+            }
+        }
+    }
+}
+
+static void swap(int[] arr, int a, int b){
+    int temp = arr[a];
+    arr[a] = arr[b];
+    arr[b] = temp;
+}
+```
+
+* **Outer Loop (`for i...`)**: This loop runs from the start of the array up to the second-to-last element. The variable `i` can be thought of as a marker for the last element of the *sorted* subarray (which grows from left to right).
+* **Inner Loop (`for j...`)**: For each pass of the outer loop, the inner loop starts at `j = i + 1`, which is the first element in the *unsorted* part.
+* **Comparison and Swap (`if arr[j] < arr[j-1]`)**: The loop compares the current element `arr[j]` with the one to its left, `arr[j-1]`. If it's smaller, the `swap` function is called. The `j` pointer then moves one step to the left (`j--`), and the comparison continues. This process effectively "bubbles" the element leftwards until it finds its correct sorted position.
+* **The `break` Statement**: This is a crucial optimization. As soon as `arr[j]` is no longer smaller than the element to its left (`arr[j-1]`), we know it has been placed correctly relative to the other elements in the sorted portion. The `break` immediately terminates the inner loop, preventing unnecessary comparisons.
+* **`swap` function**: A simple helper method to swap the values at two given indices in the array.
+
+---
 
