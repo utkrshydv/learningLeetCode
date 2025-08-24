@@ -1610,3 +1610,9 @@ public class DLL {
 
 
 -----
+
+<details>
+ <summary>
+  📚 Stacks & Queues
+ </summary>
+</details>
