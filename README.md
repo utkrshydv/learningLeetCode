@@ -1655,7 +1655,7 @@ Binary Search is a highly efficient searching algorithm used to find an element'
   * **Space Complexity:**
 
       * **$O(1)$** (Iterative) - Your implementation uses a constant amount of extra space for pointers (`start`, `end`, `mid`), making it very memory-efficient.
-      * *(For reference, a recursive implementation would have a space complexity of $O(\\log n)$ due to the memory used by the call stack).*
+      * *(For reference, a recursive implementation would have a space complexity of O(log n) due to the memory used by the call stack).*
 
 -----
 
