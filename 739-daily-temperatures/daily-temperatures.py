@@ -9,5 +9,9 @@ class Solution:
                 res[stackInd] = (i - stackInd)
             stack.append([i, t])
         return res
+
+
+        res = [0]*len(temperatures)
+        stack = []
             
         
