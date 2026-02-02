@@ -3,7 +3,7 @@ class Solution:
 
         count = {}
 
-        freq = [[] for i in range(len(nums)+1)]
+        freq = [[] for i in range(len(nums) + 1)]
 
         for n in nums:
             count[n] = 1 + count.get(n, 0)
@@ -17,17 +17,12 @@ class Solution:
                 if len(res) == k:
                     return res
 
+            # res = []
+            # hashmap = {}
 
+            # for num in nums:
+            #     hashmap[num] = 1 + hashmap.get(num, 0)
 
-        # res = []
-        # hashmap = {}
+            # sorted_map = [k for k,v in sorted(hashmap.items(), key = lambda item : item[1], reverse  = True)]
 
-        # for num in nums:
-        #     hashmap[num] = 1 + hashmap.get(num, 0)
-
-        # sorted_map = [k for k,v in sorted(hashmap.items(), key = lambda item : item[1], reverse  = True)]
-
-
-        # return sorted_map[:k]
-
-                
+            # return sorted_map[:k]
