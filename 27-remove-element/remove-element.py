@@ -1,14 +1,23 @@
 class Solution:
     def removeElement(self, nums: List[int], val: int) -> int:
 
-        res = []
+        k = 0
 
-        for num in nums:
-            if num != val:
-                res.append(num)
+        for i in range(len(nums)):
+            if nums[i] != val:
+                nums[k] = nums[i]
+                k += 1
 
-        for i in range(len(res)):
-            nums[i] = res[i]
+        return k
 
-        return len(res)
+        # res = []
+
+        # for num in nums:
+        #     if num != val:
+        #         res.append(num)
+
+        # for i in range(len(res)):
+        #     nums[i] = res[i]
+
+        # return len(res)
             
