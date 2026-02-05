@@ -14,33 +14,24 @@ class Solution:
             else:
                 break
 
+        
         if not(top <= bottom):
             return False
 
-        row = (top + bottom) //2
+        row = (top + bottom)//2
 
         left, right = 0, columns - 1
         while left <= right:
-            mid = (left+right)//2
+            mid = (left +  right) // 2
             if matrix[row][mid] == target:
                 return True
-            elif matrix[row][mid] < target:
-                left = mid + 1
-            else:
+            elif matrix[row][mid] > target:
                 right = mid - 1
-            
-        return False
+            else:
+                left = mid + 1
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        return False
+       
         
         
         
