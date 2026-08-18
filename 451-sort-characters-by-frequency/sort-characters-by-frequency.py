@@ -2,13 +2,27 @@ from collections import Counter
 
 class Solution:
     def frequencySort(self, s: str) -> str:
-        freq = Counter(s)
+        freq = {}
 
-        sorted_freq = sorted(freq.items(), key = lambda x:x[1], reverse=True)
+        for ch in s:
+            if ch in freq:
+                freq[ch] += 1
+            else:
+                freq[ch] = 1
 
-        new_s = ""
+        arr = []
+        for ch in freq:
+            arr.append([ch, freq[ch]])
 
-        for x, y in sorted_freq:
-            new_s += x*y
+        for i in range(len(arr)):
+            max_index = i
 
+            for j in range(i+1, len(arr)):
+                if arr[j][1]>arr[max_index][1]:
+                    max_index = j
+            arr[i], arr[max_index] = arr[max_index], arr[i]
+
+        new_s=""
+        for ch, count in arr:
+            new_s += ch*count
         return new_s
