@@ -7,26 +7,31 @@
 class Solution:
     def isSymmetric(self, root: Optional[TreeNode]) -> bool:
 
-        def compare(left, right):
-            if not left and not right: return True
-            if not left or not right: return False
+        q = deque([(root.left, root.right)])
 
-            return (left.val == right.val and
-            compare(left.left, right.right) and
-            compare(left.right, right.left) 
-            )
+        while q:
 
-        return compare(root.left, root.right)
+            left, right = q.popleft()
+
+            if left is None and right is None:
+                continue
+            if left is None or right is None:
+                return False
+            if left.val != right.val:
+                return False
+
+            q.append((left.right, right.left))
+            q.append((left.left, right.right))
+
+        return True
         # def dfs(left, right):
         #     if not left and not right:
         #         return True
         #     if not left or not right:
         #         return False
 
-        #     return (left.val == right.val and 
+        #     return (left.val == right.val and
         #             dfs(left.left, right.right) and
         #             dfs(left.right, right.left))
 
         # return dfs(root.left, root.right)
-        
-        
