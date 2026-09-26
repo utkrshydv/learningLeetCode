@@ -5,39 +5,21 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def rangeSumBST(self, root: Optional[TreeNode], low: int, high: int) -> int:
+    def rangeSumBST(self, root: TreeNode | None, low: int, high: int) -> int:
+        
 
         def dfs(root):
-
-            if not root:
+            if root is None:
                 return 0
-
-            rangeSum = 0
-
+            total = 0
             if low <= root.val <= high:
-                rangeSum += root.val
+                total += root.val
             
-            rangeSum += dfs(root.left)
-            rangeSum += dfs(root.right)
+            total += dfs(root.left)
+            total += dfs(root.right)
 
-            return rangeSum
+            return total
+
 
         return dfs(root)
-
-        # if root is None:
-        #     return 0
-
-        # sum_val = 0
-
-        # if root.val > low:
-        #     sum_val += self.rangeSumBST(root.left, low, high)
-
-        # if low <= root.val <= high:
-        #     sum_val += root.val
-
-        # if root.val < high:
-        #     sum_val += self.rangeSumBST(root.right, low, high)
-
-        # return sum_val
-
         
