@@ -5,18 +5,19 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def isSymmetric(self, root: Optional[TreeNode]) -> bool:
+    def isSymmetric(self, root: TreeNode | None) -> bool:
 
         q = deque([(root.left, root.right)])
 
         while q:
-
             left, right = q.popleft()
 
             if left is None and right is None:
                 continue
+
             if left is None or right is None:
                 return False
+
             if left.val != right.val:
                 return False
 
@@ -24,14 +25,6 @@ class Solution:
             q.append((left.left, right.right))
 
         return True
-        # def dfs(left, right):
-        #     if not left and not right:
-        #         return True
-        #     if not left or not right:
-        #         return False
 
-        #     return (left.val == right.val and
-        #             dfs(left.left, right.right) and
-        #             dfs(left.right, right.left))
 
-        # return dfs(root.left, root.right)
+        
