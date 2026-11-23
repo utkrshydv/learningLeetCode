@@ -1,13 +1,9 @@
 class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-
-        prev = {}
-        for i, n in enumerate(nums):
-            diff = target - n
-            if diff in prev:
-                return [prev[diff], i]
-            prev[n] = i
-        return
-
-            
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
+        hmap = {}
+        for i in range(len(nums)):
+            if target - nums[i] in hmap:
+                return [hmap[target-nums[i]],i]
+            else:
+                hmap[nums[i]] = i
         
