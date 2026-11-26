@@ -1,11 +1,11 @@
 class Solution:
-    def missingNumber(self, nums: List[int]) -> int:
+    def missingNumber(self, nums: list[int]) -> int:
         n = len(nums)
-        ans = 0
-        for i in range(1, n+1):
-            ans ^= i
-        for num in nums:
-            ans ^=num
+        expected_sum = (n * (n+1))//2
 
-        return ans
+        sum = 0
+
+        for i in range(len(nums)):
+            sum += nums[i] 
         
+        return expected_sum - sum
